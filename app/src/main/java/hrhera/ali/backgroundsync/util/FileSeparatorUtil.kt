@@ -8,6 +8,8 @@ import java.io.FileOutputStream
 
 
 object FileSeparatorUtil {
+
+
     fun splitFileToChach(
         context: Context,
         inputFile: File,
@@ -16,8 +18,13 @@ object FileSeparatorUtil {
     ): ItemFileInfo {
 
         val itemCacheDir = File(context.cacheDir, itemId)
-        if(!itemCacheDir.exists())itemCacheDir.mkdirs()
         val jsonFile = File(itemCacheDir, "info.json")
+        val result: ItemFileInfo? =
+            itemFileInfo(jsonFile = jsonFile, itemCacheDir = itemCacheDir)
+
+        if (result != null) {
+            return result
+        }
 
         val buffer = ByteArray(chunkSizeInByte(chunkSize).toInt())
         val partsMap = mutableMapOf<Int, String>()
@@ -27,7 +34,7 @@ object FileSeparatorUtil {
             while (inputStream.read(buffer).also { bytesRead = it } > 0) {
                 val chunkFile = File(
                     itemCacheDir,
-                    "${inputFile.name}.part${index+1}"
+                    "${inputFile.name}.part${index + 1}"
                 )
                 FileOutputStream(chunkFile).use { outputStream ->
                     outputStream.write(buffer, 0, bytesRead)
@@ -38,7 +45,7 @@ object FileSeparatorUtil {
         }
 
         val newItemInfo = ItemFileInfo(
-            itemName =itemId,
+            itemName = itemId,
             folderName = itemCacheDir.name,
             parts = partsMap,
             orignalFilePath = inputFile.absolutePath,
@@ -49,10 +56,39 @@ object FileSeparatorUtil {
         return newItemInfo
     }
 
+    private fun itemFileInfo(
+        jsonFile: File,
+        itemCacheDir: File
+    ): ItemFileInfo? {
+        val result: ItemFileInfo? =
+            if (!itemCacheDir.exists()) {
+                itemCacheDir.mkdirs()
+                null
+            } else {
+                getOldInfo(
+                    jsonFile = jsonFile,
+                )
+            }
+        if (result == null || !itemCacheDir.exists()) {
+            itemCacheDir.mkdirs()
+        }
+        return result
+    }
 
     private fun chunkSizeInByte(chunkSizeInMb: Int): Long {
         return (chunkSizeInMb * 1024 * 1024).toLong()
     }
 
+    private fun getOldInfo(jsonFile: File):
+            ItemFileInfo? {
+
+        if (jsonFile.exists()) {
+            val gson = Gson()
+            val itemInfo = gson.fromJson(jsonFile.readText(), ItemFileInfo::class.java)
+            return itemInfo
+        } else {
+            return null
+        }
+    }
 }
 
