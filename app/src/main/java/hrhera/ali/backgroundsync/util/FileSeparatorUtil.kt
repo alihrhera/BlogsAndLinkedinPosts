@@ -2,13 +2,14 @@ package hrhera.ali.backgroundsync.util
 
 import android.content.Context
 import com.google.gson.Gson
+import org.jetbrains.annotations.Range
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import kotlin.IllegalArgumentException
 
 
 object FileSeparatorUtil {
-
 
 
     fun splitFileToChach(
@@ -17,7 +18,7 @@ object FileSeparatorUtil {
         itemId: String,
         chunkSize: Int
     ): ItemFileInfo {
-
+        require(chunkSize > 0) { "chunkSize must be greater than zero" }
         val itemCacheDir = File(context.cacheDir, itemId)
         val jsonFile = File(itemCacheDir, "info.json")
         val result: ItemFileInfo? =
@@ -35,7 +36,7 @@ object FileSeparatorUtil {
             while (inputStream.read(buffer).also { bytesRead = it } > 0) {
                 val chunkFile = File(
                     itemCacheDir,
-                    "${inputFile.name}.part${index+1}"
+                    "${inputFile.name}.part${index + 1}"
                 )
                 FileOutputStream(chunkFile).use { outputStream ->
                     outputStream.write(buffer, 0, bytesRead)
@@ -44,9 +45,11 @@ object FileSeparatorUtil {
                 index++
             }
         }
-
+        if (partsMap.isEmpty()) {
+            throw Exception("Empty or corrupted file")
+        }
         val newItemInfo = ItemFileInfo(
-            itemName =itemId,
+            itemName = itemId,
             folderName = itemCacheDir.name,
             parts = partsMap,
             orignalFilePath = inputFile.absolutePath,
@@ -75,7 +78,7 @@ object FileSeparatorUtil {
                     itemCacheDir = itemCacheDir
                 )
             }
-        if(result==null||!itemCacheDir.exists()){
+        if (result == null || !itemCacheDir.exists()) {
             itemCacheDir.mkdirs()
         }
         return result
@@ -89,9 +92,18 @@ object FileSeparatorUtil {
             ItemFileInfo? {
 
         if (jsonFile.exists()) {
-            val gson = Gson()
-            val itemInfo = gson.fromJson(jsonFile.readText(), ItemFileInfo::class.java)
-            if (orignalFile.absolutePath != itemInfo.orignalFilePath || itemInfo.chankSizeInMb != chunkSize) {
+            val itemInfo = try {
+                val gson = Gson()
+                gson.fromJson(jsonFile.readText(), ItemFileInfo::class.java)
+            } catch (_: Exception) {
+                itemCacheDir.deleteRecursively()
+                return null
+            }
+
+            if (itemInfo == null ||
+                orignalFile.absolutePath != itemInfo.orignalFilePath ||
+                itemInfo.chankSizeInMb != chunkSize
+            ) {
                 itemCacheDir.deleteRecursively()
                 return null
             }
