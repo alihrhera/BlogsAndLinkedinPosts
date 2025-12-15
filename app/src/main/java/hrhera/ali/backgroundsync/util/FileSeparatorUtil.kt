@@ -2,11 +2,9 @@ package hrhera.ali.backgroundsync.util
 
 import android.content.Context
 import com.google.gson.Gson
-import org.jetbrains.annotations.Range
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import kotlin.IllegalArgumentException
 
 
 object FileSeparatorUtil {
