@@ -1,10 +1,11 @@
 package hrhera.ali.backgroundsync.ui.worker
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.work.BackoffPolicy
+import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
@@ -42,6 +43,12 @@ class UploadWorkerViewModel @Inject constructor(
                 BackoffPolicy.LINEAR,
                 30,
                 TimeUnit.SECONDS
+            )
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.NOT_ROAMING)
+                    .setRequiresBatteryNotLow(true)
+                    .build()
             )
             .build()
 
