@@ -6,6 +6,6 @@ This repository serves as a collection of practical Android development concepts
 
 | Topic / Concept | LinkedIn Post | Source Code Branch |
 | :--- | :--- | :--- |
-| **Background Sync with WorkManager** | [Coming Soon](#) | [BackgroundSync](../../tree/BackgroundSync) |
+| **Background Sync with WorkManager** | [Linkedin post](https://www.linkedin.com/posts/alihrhera_background-sync-workmanager-activity-7406930459554758656-WHBx) | [BackgroundSync](../../tree/BackgroundSync) |
 
 ---
