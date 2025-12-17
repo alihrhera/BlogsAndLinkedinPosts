@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "KnowledgeSharing"
 include(":app")
- 
+include(":annotations")

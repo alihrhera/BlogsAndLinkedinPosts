@@ -1,4 +1,4 @@
-package hrhera.ali.backgroundsync.ui.theme
+package hrhera.ali.knowledgesharing.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

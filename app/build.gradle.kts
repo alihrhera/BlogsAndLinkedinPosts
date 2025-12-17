@@ -2,14 +2,15 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.devtools.ksp)
 }
 
 android {
-    namespace = "hrhera.ali.backgroundsync"
+    namespace = "hrhera.ali.knowledgesharing"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "hrhera.ali.backgroundsync"
+        applicationId = "hrhera.ali.knowledgesharing"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -37,6 +38,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":annotations"))
+    ksp(project(":annotations"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
