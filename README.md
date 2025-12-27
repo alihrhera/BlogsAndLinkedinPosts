@@ -23,6 +23,22 @@ Annotations provide a powerful way to add metadata to our code. Instead of writi
 ### 1. Module Setup
 We created a separate Java/Kotlin Library module named `annotations` to contain our annotations and processor. This separation is best practice to avoid including the processor code in the final app APK.
 
+```txt
+root
+│
+├── app                ← مشروعك الأساسي
+│
+├── annotations     
+	|── annotations 
+		|── ToRequestMap.kt
+		|── ToRequestMapFailed.kt
+		|── IgnoreFailed.kt
+	├── processor
+		|── ToRequestMapProcessor.kt
+		|── ToRequestMapProcessorProvider.kt
+
+```
+
 ### 2. Defining Annotations
 We defined three key annotations in `hrhera.ali.annotations`:
 *   **`@ToRequestMap`**: Marks the class that needs a map generation.
@@ -59,4 +75,43 @@ After building the project, KSP generates the code, allowing us to call:
 ```kotlin
 val request = QueryRequest2(...)
 val map = request.toRequestMap() // Auto-generated!
+```
+you will find the generated code in the `build/generated/ksp/.../G_` directory.
+
+```kotlin
+// build/generated/ksp/.../G_QueryRequest1ToRequestMap.kt
+package hrhera.ali.knowledgesharing.domain
+
+import hrhera.ali.knowledgesharing.domain.QueryRequest1
+fun QueryRequest1.toRequestMap(): Map<String, String> {
+    val map = mutableMapOf<String, String>()
+    map["name"] = this.name.toString()
+    this.nullValue?.let { map["nullValue"] = it.toString() }
+    return map
+}
+
+// build/generated/ksp/.../G_QueryRequest2ToRequestMap.kt
+package hrhera.ali.knowledgesharing.domain
+
+import hrhera.ali.knowledgesharing.domain.QueryRequest2
+fun QueryRequest2.toRequestMap(): Map<String, String> {
+    val map = mutableMapOf<String, String>()
+    map["name"] = this.name.toString()
+    map["query_name"] = this.namedProperty.toString()
+    this.nullValue?.let { map["nullValue"] = it.toString() }
+    return map
+}
+
+// build/generated/ksp/.../G_QueryRequest3ToRequestMap.kt
+package hrhera.ali.knowledgesharing.domain
+
+import hrhera.ali.knowledgesharing.domain.QueryRequest3
+fun QueryRequest3.toRequestMap(): Map<String, String> {
+    val map = mutableMapOf<String, String>()
+    map["name"] = this.name.toString()
+    map["namedProperty"] = this.namedProperty.toString()
+    this.nullValue?.let { map["nullValue"] = it.toString() }
+    return map
+}
+
 ```
