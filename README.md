@@ -50,8 +50,7 @@ The compression process is integrated into the app's background synchronization 
 
 The following video demonstrates the compression process and the resulting quality:
 
-<video src="res/video_compression.mp4" controls title="Video Compression Demo" style="max-width: 100%;">
-</video>
+![Video](res/video_compression.mp4)
 
 > [!NOTE]
 > The compression process significantly reduces file size while maintaining visual clarity, ensuring faster uploads and better user experience.
